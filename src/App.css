@@ -58,7 +58,7 @@ body {
 .img-icon {
   text-align: center;
   height: 100px;
-  margin: 15px;
+  margin-top: 25px;
   color: #FF8C42;
   background-color: #FF8C42;
   border-radius: 10px;
@@ -163,3 +163,65 @@ body {
     font-size: 20px;
     font-weight: 600;
 }
+
+/* Suggestion overlay (ghost) styles
+   - Positioned absolutely so it overlays the content below the input
+   - Subtle translucent background and muted text to appear as "ghost" data
+   - Stronger hover/active styles for clarity */
+.input-container {
+    position: relative; /* anchor for suggestions */
+    overflow: visible; /* allow dropdown to overlap following content */
+    z-index: 2;
+}
+
+.suggestions {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 8px); /* directly below the input box */
+    width: 100%;
+    max-height: 220px;
+    overflow-y: auto;
+    background: rgba(38,22,56,0.65); /* match dark purple palette */
+    border: 1px solid rgba(255,255,255,0.04);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    border-radius: 8px;
+    z-index: 500; /* sit above weather data */
+    padding: 6px 0;
+    box-sizing: border-box;
+}
+
+.suggestion-item {
+    padding: 10px 14px;
+    cursor: pointer;
+    color: rgba(215,208,230,0.65); /* pale lavender, ghost-like */
+    font-size: 16px;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.suggestion-item:hover,
+.suggestion-item.active {
+    background-color: rgba(255,140,66,0.12); /* soft orange accent */
+    color: #ffffff;
+}
+
+/* Single-line inline ghost suggestion that appears as subtle overlay text
+   inside the input area — non-interactive (pointer-events: none) */
+.inline-ghost {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(215,208,230,0.25);
+    pointer-events: none;
+    font-size: 18px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    z-index: 3;
+}
+
+

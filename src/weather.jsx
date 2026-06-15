@@ -10,11 +10,27 @@ import rain from "./assets/rain.png"
 import snow from "./assets/snow.png"
 import wind from "./assets/wind.png"
 
+const autoCompleteUrl = 'http://api.weatherapi.com/v1/search.json?key=5e80c7e9572c495fbff63338261406&q=';
 
 
 function Weather(){
     let apiKey = "4e63b3a91f257f3a30fd8caf74ea1227";
     const [text, setText] = useState("Chennai");
+    const [citySuggestion, setCitySuggestion] = useState([]);
+
+    useEffect(() => {
+        const fetchAutoSuggestion = async () => {
+            const res = await fetch(autoCompleteUrl + text);
+            const data = await res.json();
+            const citySuggestionData = data.map((curData) => `${curData.name}, ${curData.region}, ${curData.country}`);
+            setCitySuggestion(citySuggestionData);
+        };
+        // if (text.length > 2 ) {
+        fetchAutoSuggestion();
+        // } else {
+        //     setCitySuggestion([]);
+        // }
+    },[text])
 
     const [icon, setIcon] = useState();
     const [temp, setTemp] = useState(0);
@@ -46,9 +62,12 @@ function Weather(){
         "13n" : snow,
     };
 
-    const search = async () => {
-    let url = `https://api.openweathermap.org/data/2.5/weather?q=${text}&appid=${apiKey}&units=Metric`;
+    const search = async (query) => {
+    const q = query ?? text;
+    let url = `https://api.openweathermap.org/data/2.5/weather?q=${q}&appid=${apiKey}&units=Metric`;
     setLoading(true);
+
+    console.log(url);
 
     try{
         let res = await fetch(url);
@@ -77,11 +96,13 @@ function Weather(){
         
     }finally {
         setLoading(false);
+        setText("");
     }
 };
 
     const handleCity = (e) => {
         setText(e.target.value);
+        // <CitySuggestion citySuggestion={citySuggestion}/>
     }
 
     const handleKeyDown = (e) =>{
@@ -93,6 +114,8 @@ function Weather(){
     useEffect(function () {
         search();
     }, []);
+
+    
     
     return <>
         <div className="container">
@@ -102,11 +125,28 @@ function Weather(){
                     className="city-input" 
                     placeholder="Search City"
                     value={text}
-                    onKeyDown={handleKeyDown}/>
+                    onKeyDown={handleKeyDown}
+                    />
+                
                 <div className="search-icon" onClick={() => search()}>
                     <img src={search1} alt="Search" title="search" />
                 </div>
+
+                <div className="suggestions">
+                    {text && citySuggestion
+                        .filter((c)=>c.toLowerCase().includes(text.toLowerCase()))
+                        .map((curCity, idx) => (
+                            <div 
+                                key = {curCity + idx}
+                                className="suggestion-item"
+                                onClick = {() => {setText(curCity); search(curCity);}}
+                                onKeyDown={handleKeyDown}
+                            >
+                                {curCity}
+                            </div>
+                    ))}</div>
             </div>
+
             {!loading && !cityNotFound && <WeatherDetails icon={icon} temp={temp} city={city} country={country} 
                 lat={lat} log={log} humidity={humidity} wind={wind} />}
 
@@ -115,6 +155,17 @@ function Weather(){
             {cityNotFound && <div className="city-not-found">City not found</div>}
         </div>
     </> 
+
+    // function CitySuggestion({citySuggestion}) {
+    //     return (<>
+    //         <div className="suggestionBox">
+    //                 {citySuggestion.map((curCity) => {
+    //                     <div className = "suggestion">{curCity}</div>
+    //                     console.log(curCity);
+    //                 })}
+    //     </div>
+    //     </>)
+    // }
 
 }
 
