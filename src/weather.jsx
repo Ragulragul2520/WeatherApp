@@ -10,7 +10,7 @@ import rain from "./assets/rain.png"
 import snow from "./assets/snow.png"
 import wind from "./assets/wind.png"
 
-const autoCompleteUrl = 'http://api.weatherapi.com/v1/search.json?key=5e80c7e9572c495fbff63338261406&q=';
+const autoCompleteUrl = 'https://api.weatherapi.com/v1/search.json?key=5e80c7e9572c495fbff63338261406&q=';
 
 
 function Weather(){
@@ -25,11 +25,8 @@ function Weather(){
             const citySuggestionData = data.map((curData) => `${curData.name}, ${curData.region}, ${curData.country}`);
             setCitySuggestion(citySuggestionData);
         };
-        // if (text.length > 2 ) {
         fetchAutoSuggestion();
-        // } else {
-        //     setCitySuggestion([]);
-        // }
+        
     },[text])
 
     const [icon, setIcon] = useState();
